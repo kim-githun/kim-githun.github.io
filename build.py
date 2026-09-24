@@ -540,9 +540,9 @@ def page(path, title, desc, body, current=None, jsonld=None, body_attr=""):
               '<nav class="gnb" aria-label="주요 메뉴">%s</nav></div></header>'
               % (pre, esc(CFG["site_name"]), esc(DATA["updated"]), nav))
     footer = ('<footer class="site-foot"><div class="wrap"><div>'
-              '<p><b>면책</b> · 이 사이트의 수치는 공개 통계를 인용·가공한 것이며, 과열도는 자체 산식에 따른 해석입니다. '
-              '투자 권유나 자문이 아니며 어떠한 거래 결정의 근거로도 사용될 수 없습니다.</p>'
-              '<p>본 사이트는 개인이 운영하는 정보 사이트로, 한국은행·통계청·한국부동산원·국토교통부 등 어떤 기관과도 관계가 없습니다.</p>'
+              '<p><b>알려 드려요</b> · 이 사이트의 숫자는 공개 통계를 옮기거나 계산한 것이고, 과열도는 이 사이트가 정한 방식으로 매긴 점수예요. '
+              '투자 권유나 자문이 아니니, 사고팔기를 정하는 근거로 쓰지 마세요.</p>'
+              '<p>개인이 운영하는 정보 사이트예요. 한국은행·통계청·한국부동산원·국토교통부 등 어떤 기관과도 관계가 없어요.</p>'
               '<p class="mono stamp">데이터 최종 반영 %s · 페이지 생성 %s</p></div>'
               '<nav aria-label="사이트 정보"><a href="%smethodology.html">산출 방법과 검증</a>'
               '<a href="%sabout.html">운영자 소개 · 문의</a><a href="%sprivacy.html">개인정보처리방침</a>'
@@ -558,10 +558,10 @@ def page(path, title, desc, body, current=None, jsonld=None, body_attr=""):
 # 계기판
 # ─────────────────────────────────────────────────────────────
 COPY = {
-    "capital": "가격은 주간 +{p}%로 연 {ann}% 안팎의 속도, 전세가율 {j}%는 가격의 {exp}%가 기대값이라는 뜻입니다. "
-               "그런데 미분양도 {u}호로 함께 늘고 있습니다. 오르는 가격과 늘어나는 재고가 같이 있는 국면입니다.",
-    "local": "가격은 주간 +{p}%로 사실상 보합이고, 전세가율 {j}%는 가격에 기대가 거의 실려 있지 않다는 뜻입니다. "
-             "전국 미분양의 {share}%가 이 권역에 있습니다. 과열이 아니라 수요가 얇은 시장입니다.",
+    "capital": "집값이 한 주에 {p}% 올랐어요. 1년 내내 이 속도면 {ann}% 안팎 오르는 셈이에요. 전세가율(집값에서 전세금이 차지하는 비율)은 {j}%라서, "
+               "집값의 {exp}% 정도는 '앞으로 오를 거라는 기대'가 얹힌 값이에요. 그런데 안 팔린 집(미분양)도 {u}호로 함께 늘고 있어요. 값은 오르는데 재고도 쌓이는, 엇갈린 모습이에요.",
+    "local": "집값은 한 주에 {p}% 움직여 사실상 제자리예요. 전세가율이 {j}%로 높아서, 집값에 '오를 거라는 기대'가 거의 실려 있지 않아요. "
+             "전국에서 안 팔린 집(미분양)의 {share}%가 이 권역에 있어요. 뜨거운 게 아니라, 사려는 사람이 적은 시장이에요.",
 }
 
 
@@ -603,7 +603,7 @@ def hero(r):
 <div class="wrap hero r-%(r)s">
   <div>
     <div class="kicker">종합 판독 · %(rn)s (%(rs)s)</div>
-    <h1>지금 %(rn)s 시장은 <em>%(zl)s</em> 구간입니다.<br>%(on)s과는 다른 계기를 보고 있습니다.</h1>
+    <h1>지금 %(rn)s 시장은 <em>%(zl)s</em> 구간이에요.<br>%(on)s과는 전혀 다른 모습이에요.</h1>
     <p class="lead">%(copy)s</p>
     <div class="chips">%(chips)s</div>
   </div>
@@ -675,7 +675,7 @@ def anatomy(r):
         prev_note = "직전 갱신(%s) %s → 이번 %s, <b>%+.1fp</b>." % (
             esc(PREV.get("updated", "")), fmt(P["score"]), fmt(S["score"]), diff)
     else:
-        prev_note = "직전 갱신과 비교할 기록이 아직 없습니다. 다음 자동 갱신부터 이 열에 변화가 표시됩니다."
+        prev_note = "아직 지난번 기록이 없어 비교할 수 없어요. 다음 자동 갱신부터 이 칸에 얼마나 바뀌었는지 보여 드려요."
     return """
 <div class="r-%(r)s">
   <div class="tablewrap"><table class="table" style="min-width:720px">
@@ -701,7 +701,7 @@ def gap_block():
     <div class="s">수도권 %s · 지방 %s</div></div>
   %s
 </div>
-<p class="muted" style="font-size:12.5px;margin-top:12px">격차를 지표별 기여 차이로 나눈 것입니다. 지금 격차를 가장 크게 만드는 것은 <b>%s</b>입니다.</p>
+<p class="muted" style="font-size:12.5px;margin-top:12px">두 권역의 점수 차이를 지표별로 나눠 본 거예요. 지금 차이를 가장 크게 만드는 건 <b>%s</b>예요.</p>
 """ % (GAP, fmt(SCORE["capital"]["score"]), fmt(SCORE["local"]["score"]), "".join(parts), KIND[biggest[0]])
 
 
@@ -738,7 +738,7 @@ def dashboard():
     <button type="button" data-set="capital" aria-pressed="true"><b>수도권</b><span>%(rtab_c)s</span></button>
     <button type="button" data-set="local" aria-pressed="false"><b>지방</b><span>%(rtab_l)s</span></button>
   </div>
-  <p class="region-hint">권역을 누르면 아래 계기·해부도·지표가 모두 그 권역으로 바뀝니다.</p>
+  <p class="region-hint">권역을 누르면 아래 계기와 표가 모두 그 권역 기준으로 바뀌어요.</p>
 </div></div>
 %(hero_c)s
 %(hero_l)s
@@ -746,13 +746,13 @@ def dashboard():
 
 <section class="wrap sec" id="gauges">
   <div class="sec-head"><div><div class="kicker">계기판 / 권역 3개 + 공통 %(nn)d개</div><h2>지표별 바늘</h2></div>
-    <p>각 계기는 지표의 역사적 변동 범위를 눈금으로 삼습니다. 값이 아니라 <b>위치</b>를 보세요. 점선 틀은 권역 점수에 넣지 않은 지표입니다.</p></div>
+    <p>계기마다 그 지표가 과거에 움직였던 범위를 눈금으로 삼았어요. 숫자보다 바늘이 <b>어디쯤</b> 있는지를 보세요. 점선 틀은 점수 계산에 넣지 않은 참고 지표예요.</p></div>
   <div class="gauges">%(gauges)s</div>
 </section>
 
 <section class="wrap sec" id="anatomy">
-  <div class="sec-head"><div><div class="kicker">해부도</div><h2>과열도는 이렇게 나왔습니다</h2></div>
-    <p>각 지표를 0~100으로 환산해 가중평균했습니다. 블랙박스는 없습니다. 어떤 지표가 점수를 얼마나 끌어올렸는지, 직전 갱신보다 무엇이 바뀌었는지 아래에 전부 적었습니다.</p></div>
+  <div class="sec-head"><div><div class="kicker">해부도</div><h2>점수는 이렇게 나왔어요</h2></div>
+    <p>지표마다 0~100점으로 바꾼 뒤, 중요도에 따라 비중을 달리해 평균을 냈어요. 숨긴 계산은 없어요. 어떤 지표가 점수를 얼마나 올렸는지, 지난번보다 무엇이 바뀌었는지 아래에 모두 적었어요.</p></div>
   %(anat_c)s
   %(anat_l)s
   %(gap)s
@@ -760,7 +760,7 @@ def dashboard():
 
 <section class="wrap sec" id="rates">
   <div class="sec-head"><div><div class="kicker">시계열 / 2008–%(yr)d</div><h2>모든 사이클의 뒷배경, 기준금리</h2></div>
-    <p>집값 그래프보다 먼저 봐야 할 그래프입니다. 2020년의 0.50%%가 2021년 고점을 만들었고, 2023년의 3.50%%가 그 고점을 깎았습니다. 그리고 2026년 7·8월, 한국은행은 다시 올리기 시작했습니다.</p></div>
+    <p>집값 그래프보다 먼저 볼 그래프예요. 2020년 0.50%%까지 내려간 금리는 2021년 집값 고점의 배경으로 자주 꼽히고, 2023년 3.50%%까지 오른 금리는 그 고점을 끌어내렸다는 평가가 많아요. 그리고 2026년 7·8월, 한국은행은 다시 금리를 올리기 시작했어요.</p></div>
   <div class="blueprint chart">%(c)s%(rate)s
     <div class="key"><span><i style="width:20px;height:2px;background:var(--color-accent-700)"></i>한국은행 기준금리 (연 %%)</span>
       <span><i style="width:9px;height:9px;border-radius:50%%;background:var(--color-accent-900)"></i>주요 변곡점</span>
@@ -770,7 +770,7 @@ def dashboard():
 
 <section class="wrap sec" id="history">
   <div class="sec-head"><div><div class="kicker">기점 / 2008–현재</div><h2>지표가 꺾인 날들</h2></div>
-    <p>지표는 스스로 움직이지 않습니다. 금리, 대책, 위기가 먼저 있고 지표는 뒤따릅니다.</p></div>
+    <p>지표는 혼자 움직이지 않아요. 금리, 정부 대책, 경제 위기가 먼저 오고 지표는 그 뒤를 따라가요.</p></div>
   <div class="grid5">%(tl)s</div>
 </section>
 
@@ -778,7 +778,7 @@ def dashboard():
 
 <section class="wrap sec" id="guide">
   <div class="sec-head"><div><div class="kicker">읽는 법</div><h2>이 숫자가 실제로 뜻하는 것</h2></div>
-    <p>"몇이면 위험한가"보다 중요한 건 "이 지표가 언제 거짓말을 하는가"입니다. 각 항목의 마지막 문단이 그 함정입니다.</p></div>
+    <p>"몇이면 위험한가"보다 "이 숫자가 언제 헷갈리게 만드는가"를 아는 게 더 중요해요. 항목마다 마지막 문단에 그 함정을 적었어요.</p></div>
   <div class="grid3">%(guide)s</div>
 </section>
 
@@ -790,12 +790,12 @@ def dashboard():
 
 <section class="wrap sec" id="sources">
   <div class="sec-head"><div><div class="kicker">데이터 원장</div><h2>수치와 출처</h2></div>
-    <p>갱신 주기가 다른 지표를 한 화면에 올린 이상, 기준 시점 표기는 타협하지 않습니다. 마지막 열은 최근 자동 갱신에서 이 지표가 통과한 검사 결과입니다.</p></div>
+    <p>지표마다 발표 주기가 달라서, 언제 기준 숫자인지 반드시 함께 적었어요. 마지막 칸은 최근 자동 갱신 때 이 숫자가 검사를 통과했는지 보여 줘요.</p></div>
   <div class="tablewrap"><table class="table" style="min-width:880px">
     <thead><tr><th>권역</th><th>지표</th><th class="n">값</th><th>기준 시점</th><th>출처</th><th>주기</th><th>최근 검증</th></tr></thead>
     <tbody>%(ledger)s</tbody></table></div>
-  <p class="muted" style="font-size:12.5px;margin-top:12px">지방 미분양은 공표값이 아니라 전국에서 수도권을 뺀 계산값입니다. 주택구입부담지수는 서울 기준이며 분기마다 수동으로 입력합니다.
-    검증 방식은 <a href="methodology.html#s-자동-갱신과-검증">산출 방법</a>에 있습니다.</p>
+  <p class="muted" style="font-size:12.5px;margin-top:12px">지방 미분양은 발표된 숫자가 아니라 전국에서 수도권을 빼서 계산한 값이에요. 주택구입부담지수는 서울 기준이고 분기마다 직접 입력해요.
+    검사 방법은 <a href="methodology.html#s-자동-갱신과-검증">산출 방법</a>에 있어요.</p>
 </section>
 
 <script>
@@ -875,7 +875,7 @@ def article_page(a, idx):
         if next_a else '<a class="next" href="index.html"><span>시리즈 끝</span><b>통계 해설 전체 보기</b></a>'))
     more = "".join(guide_card(g, "../guides/") for g in GUIDEBOOK)
     src = a.get("sources") or ("한국은행 경제통계시스템(ECOS), 국가통계포털(KOSIS), 한국부동산원, 국토교통부. "
-                               "본문 수치는 각 기관 공개 자료에서 직접 조회해 확인한 값입니다.")
+                               "본문 숫자는 각 기관 공개 자료에서 직접 찾아 확인한 값이에요.")
     body = """
 <div class="wrap narrow doc">
   <article>
@@ -887,9 +887,9 @@ def article_page(a, idx):
     %(toc)s
     <div class="prose">%(body)s</div>
     <div class="blueprint srcbox">%(c)s<b>자료와 한계</b><br>%(src)s
-      <div class="disc">이 글은 통계를 읽는 법을 설명하기 위한 것이며 투자 판단의 근거가 아닙니다.
-        지표는 시장 전체의 평균적인 움직임을 말할 뿐 개별 단지·개별 계약에 대해서는 아무것도 보장하지 않습니다.
-        사실관계 오류를 발견하시면 <a href="../about.html#s-문의">알려 주세요</a>. 확인 후 고치고 고친 날짜를 적습니다.</div>
+      <div class="disc">통계 읽는 법을 설명하는 글이에요. 투자 판단의 근거로 쓰지 마세요.
+        지표는 시장 전체의 평균적인 움직임일 뿐, 특정 아파트나 특정 계약에 대해서는 아무것도 말해 주지 않아요.
+        틀린 곳을 발견하시면 <a href="../about.html#s-문의">알려 주세요</a>. 확인한 뒤 고치고, 고친 날짜를 적어 둘게요.</div>
     </div>
     <section class="more"><h2>「%(series)s」 이어서 읽기</h2>%(pager)s</section>
     <section class="more"><h2>생활 가이드</h2><div class="cards">%(more)s</div></section>
@@ -921,8 +921,8 @@ def articles_index():
 <div class="wrap doc">
   <div class="kicker">통계 해설 / 전 %d편</div>
   <h1>통계 해설</h1>
-  <p class="sub" style="max-width:64ch">"몇이면 위험한가"보다 중요한 것은 "이 지표가 언제 거짓말을 하는가"입니다.
-     각 글의 마지막 단락이 그 함정을 다룹니다.</p>
+  <p class="sub" style="max-width:64ch">뉴스에 나오는 부동산 숫자, 그대로 믿어도 될까요? 숫자가 언제 헷갈리게 만드는지 쉽게 풀었어요.
+     글마다 마지막 부분에 조심할 점을 모아 두었어요.</p>
   %s
 </div>""" % (len(ARTICLES), sec)
     return page("articles/index.html", "통계 해설", "부동산 통계를 읽는 법과 각 지표가 틀리는 순간을 다룬 해설 모음.",
@@ -992,19 +992,19 @@ def guide_page(g):
     <p class="sub">%(sub)s</p>
     <div class="meta"><span>글 %(pen)s</span><span>검토 %(rv)s</span><span>처음 작성 %(date)s</span>
       <span><a href="index.html">가이드 목록</a></span></div>
-    <p class="notice">%(rv)s 기준으로 검토한 내용입니다. 제도가 바뀌면 본문을 고치고 이 페이지 아래 변경 기록에 남깁니다.
+    <p class="notice">%(rv)s 기준으로 확인한 내용이에요. 제도가 바뀌면 본문을 고치고, 이 페이지 아래 변경 기록에 남겨요.
       신청·납부·계약 전에는 <a href="#official">공식 확인처</a>에서 마지막으로 확인하세요.</p>
     %(toc)s
     <div class="prose">%(body)s</div>
     <section class="blueprint official" id="official">%(c)s<b>공식 확인처</b>
       <ul>%(official)s</ul></section>
     <div class="blueprint srcbox">%(c)s<b>자료</b><br>%(src)s
-      <div class="disc">이 가이드는 제도를 이해하도록 돕는 일반 정보이며 세무·법률·금융 자문이 아닙니다.
-        소유 형태, 소득, 지역, 계약 조건에 따라 결과가 달라집니다. 틀린 곳을 발견하시면
-        <a href="../about.html#s-문의">알려 주세요</a>. 확인 후 고치고 아래 변경 기록에 적습니다.</div>
+      <div class="disc">제도를 이해하도록 돕는 일반 정보예요. 세무·법률·금융 상담을 대신하지는 못해요.
+        집을 누구 이름으로 가졌는지, 소득, 지역, 계약 조건에 따라 결과가 달라져요. 틀린 곳을 발견하시면
+        <a href="../about.html#s-문의">알려 주세요</a>. 확인한 뒤 고치고 아래 변경 기록에 적을게요.</div>
     </div>
     <section class="more"><h2>이 가이드의 변경 기록</h2>%(changes)s
-      <p class="muted" style="font-size:12.5px">사이트 전체 기록은 <a href="../changelog.html">변경 기록</a>에 있습니다.</p></section>
+      <p class="muted" style="font-size:12.5px">사이트 전체 기록은 <a href="../changelog.html">변경 기록</a>에서 볼 수 있어요.</p></section>
     %(rel)s
     <section class="more"><h2>다른 가이드</h2><div class="cards">%(others)s</div></section>
   </article>
@@ -1027,15 +1027,15 @@ def guides_index():
 <div class="wrap doc">
   <div class="kicker">생활 가이드 / 전 %d편</div>
   <h1>생활 가이드</h1>
-  <p class="sub" style="max-width:66ch">세금, 대출, 전세처럼 한 번 틀리면 되돌리기 어려운 일을 시점별로 정리했습니다.
-     글마다 검토일을 적고, 제도가 바뀌면 같은 주소에서 본문을 고친 뒤 변경 기록을 남깁니다.</p>
+  <p class="sub" style="max-width:66ch">세금, 대출, 전세처럼 한 번 놓치면 되돌리기 어려운 일을 언제 무엇을 해야 하는지 순서대로 정리했어요.
+     글마다 확인한 날짜를 적고, 제도가 바뀌면 같은 주소에서 내용을 고친 뒤 변경 기록을 남겨요.</p>
   <section class="sec"><div class="cards">%s</div></section>
   <section class="sec"><div class="sec-head"><div><div class="kicker">원칙</div><h2>가이드를 쓰는 방식</h2></div></div>
     <ul class="plain">
-      <li>숫자는 확인한 출처가 있는 것만 쓰고, 자료 기준 시점을 붙입니다.</li>
-      <li>국회 심의 중이거나 입법예고 단계인 개정은 <b>확정 아님</b>으로 따로 표시합니다.</li>
-      <li>자주 바뀌는 금리·보증료율은 본문에 박지 않고 공식 확인처로 연결합니다.</li>
-      <li>각 가이드의 마지막 절은 늘 <b>이 가이드가 틀리는 경우</b>입니다.</li>
+      <li>숫자는 출처를 확인한 것만 쓰고, 언제 기준인지 함께 적어요.</li>
+      <li>아직 국회에서 논의 중이거나 예고만 된 변경은 <b>확정 아님</b>으로 따로 표시해요.</li>
+      <li>자주 바뀌는 금리나 보증료는 본문에 적지 않고, 공식 확인처로 연결해요.</li>
+      <li>가이드마다 마지막에 <b>이 가이드가 맞지 않는 경우</b>를 꼭 적어요.</li>
     </ul></section>
 </div>""" % (len(GUIDEBOOK), "".join(guide_card(g) for g in GUIDEBOOK))
     return page("guides/index.html", "생활 가이드", "종부세, 첫 집 대출, 전세 보증금처럼 시점을 놓치면 되돌리기 어려운 일을 정리한 상시 가이드.",
@@ -1048,19 +1048,19 @@ def changelog_page():
 <div class="wrap narrow doc">
   <div class="kicker">변경 기록</div>
   <h1>무엇을 언제 고쳤나</h1>
-  <p class="sub">글을 추가하거나, 제도가 바뀌어 본문을 고치거나, 틀린 곳을 바로잡을 때마다 여기에 적습니다.</p>
+  <p class="sub">새 글을 올리거나, 제도가 바뀌어 내용을 고치거나, 틀린 곳을 바로잡을 때마다 여기에 적어요.</p>
   <div class="meta"><span>최근 기록 %(last)s</span><span>전체 %(n)d건 · 정정 %(nf)d건</span></div>
   <div class="prose">
     <p><span class="kind k-add">추가</span> 새 글이나 기능. <span class="kind k-rev">개정</span> 제도·수치가 바뀌었거나 구성을 바꿔 기존 내용을 고친 것.
-       <span class="kind k-fix">정정</span> 이 사이트가 틀렸던 것을 고친 것 — 무엇이 틀렸고 무엇으로 고쳤는지 둘 다 적습니다.</p>
+       <span class="kind k-fix">정정</span> 이 사이트가 틀렸던 것을 고친 것. 무엇이 틀렸고 어떻게 고쳤는지 둘 다 적어요.</p>
   </div>
   <section class="more"><h2>전체 기록</h2>%(all)s</section>
   <section class="more"><h2>정정만 보기</h2>%(fix)s</section>
   <p class="muted" style="font-size:12.5px;margin-top:22px">자동 갱신되는 지표 값의 변경은 여기에 적지 않고
-     <a href="methodology.html#s-최근-갱신-기록">산출 방법 → 최근 갱신 기록</a>에 회차별로 공개합니다.
+     <a href="methodology.html#s-최근-갱신-기록">산출 방법 → 최근 갱신 기록</a>에 회차별로 공개해요.
      틀린 곳을 발견하시면 %(email)s 로 알려 주세요.</p>
 </div>""" % {"last": esc(CHANGES[0]["date"]), "n": len(CHANGES), "nf": len(fixes),
-             "all": changes_list(CHANGES), "fix": changes_list(fixes) if fixes else "<p>아직 없습니다.</p>",
+             "all": changes_list(CHANGES), "fix": changes_list(fixes) if fixes else "<p>아직 없어요.</p>",
              "email": email_link()}
     return page("changelog.html", "변경 기록", "부동산 시장 온도계의 글 추가, 제도 변경에 따른 개정, 정정 기록.",
                 body, current="changelog.html")
@@ -1103,10 +1103,10 @@ def home():
   <div>
     <div class="kicker">이번 판독 · 데이터 반영 %(upd)s</div>
     <h1><span class="nw">수도권은 <em>%(zc)s</em>,</span> <span class="nw">지방은 <em>%(zl)s</em>.</span></h1>
-    <p class="lead">두 권역의 과열도 차이는 <b>%(gap)+.1fp</b>입니다. 전국 평균 하나로는 이 차이가 보이지 않습니다.
-      한국은행·한국부동산원·국토교통부의 공개 통계로 계산하고, 산식과 검증 기록을 전부 공개합니다.</p>
+    <p class="lead">두 권역의 과열도 점수는 <b>%(gap)+.1f점</b> 차이 나요. 뉴스에 자주 나오는 '전국 평균' 하나로는 이 차이가 안 보여요.
+      한국은행·한국부동산원·국토교통부가 공개한 통계로 계산하고, 계산 방법과 검사 기록을 모두 공개해요.</p>
     <div class="acts"><a class="btn btn-primary" href="gauge.html">계기판 전체 보기 →</a>
-      <a class="btn" href="methodology.html">점수는 이렇게 나옵니다</a></div>
+      <a class="btn" href="methodology.html">점수는 어떻게 매기나요?</a></div>
   </div>
   <div class="duo">%(duo)s</div>
 </section>
@@ -1114,7 +1114,7 @@ def home():
 
 <section class="wrap sec">
   <div class="sec-head"><div><div class="kicker">생활 가이드</div><h2>지금 내 상황에서 확인할 것</h2></div>
-    <p>세금, 대출, 전세 보증금처럼 시점을 놓치면 되돌리기 어려운 일부터 정리했습니다. 글마다 검토일과 변경 기록이 있습니다.</p></div>
+    <p>세금, 대출, 전세 보증금처럼 때를 놓치면 되돌리기 어려운 일부터 정리했어요. 글마다 확인한 날짜와 변경 기록이 있어요.</p></div>
   <div class="sits">%(cards)s</div>
 </section>
 
@@ -1210,8 +1210,8 @@ def methodology():
                     "<thead><tr><th>항목</th><th>상태</th><th>내용</th></tr></thead><tbody>%s</tbody></table></div>"
                     % (esc(run["at"]), esc(run["verdict"]), log_rows))
     else:
-        log_html = ("<p>아직 자동 갱신 기록이 없습니다. 현재 수치는 2026년 9월 15일에 각 기관 API를 직접 호출해 "
-                    "확인한 값입니다. 첫 자동 갱신이 돌면 이 자리에 매 회차의 검사 결과가 그대로 공개됩니다.</p>")
+        log_html = ("<p>아직 자동 갱신 기록이 없어요. 지금 숫자는 2026년 9월 15일에 각 기관 API에서 직접 받아 "
+                    "확인한 값이에요. 첫 자동 갱신이 돌면 이 자리에 회차마다 검사 결과를 그대로 공개해요.</p>")
     body_md = md(PAGES.METHODOLOGY).format(**ctx())
     body_md = (body_md.replace("<p>[[ZONES]]</p>", "<div class='tablewrap'><table class='table'><thead><tr><th>구간</th>"
                                "<th class='n'>과열도</th></tr></thead><tbody>%s</tbody></table></div>" % zones)
@@ -1224,9 +1224,9 @@ def methodology():
                         "<th class='n'>허용 범위</th><th class='n'>1회 변동 한도</th></tr></thead><tbody>%s</tbody></table></div>" % bounds)
                .replace("<p>[[CHECKS]]</p>", "<ul>%s</ul>" % checks)
                .replace("<p>[[LOG]]</p>", log_html))
-    return doc_page("methodology.html", "산출 방법과 검증", "과열도는 이렇게 계산하고, 숫자는 이렇게 검증합니다",
+    return doc_page("methodology.html", "산출 방법과 검증", "점수는 이렇게 계산하고, 숫자는 이렇게 확인해요",
                     "공표 통계가 아닌 이 사이트의 자체 점수가 어떤 산식과 가중치로 나오는지, 자동 갱신된 숫자를 어떻게 검증하는지.",
-                    "과열도 산식, 지표별 눈금과 가중치, 신선도 규칙, 자동 갱신 안전장치와 최근 검증 기록을 공개합니다.",
+                    "과열도 계산 방법, 지표별 눈금과 비중, 오래된 숫자를 빼는 규칙, 자동 갱신 안전장치와 최근 검사 기록을 공개해요.",
                     body_md, current="methodology.html", updated=DATA["updated"])
 
 
@@ -1297,9 +1297,9 @@ def main():
                              updated=getattr(PAGES, "UPDATED", {}).get(path, CFG.get("launched"))))
         pages.append(path)
     pages.append("methodology.html")
-    write("404.html", page("404.html", "페이지를 찾을 수 없습니다", "요청한 페이지가 없습니다.",
-                           '<div class="wrap narrow doc"><h1>페이지를 찾을 수 없습니다</h1>'
-                           '<p class="sub">주소가 바뀌었거나 삭제된 페이지입니다. <a href="/">첫 화면으로 가기</a> · <a href="/gauge.html">계기판</a> · <a href="/guides/index.html">생활 가이드</a></p></div>'))
+    write("404.html", page("404.html", "페이지를 찾을 수 없어요", "요청한 페이지가 없어요.",
+                           '<div class="wrap narrow doc"><h1>페이지를 찾을 수 없어요</h1>'
+                           '<p class="sub">주소가 바뀌었거나 없어진 페이지예요. <a href="/">첫 화면으로 가기</a> · <a href="/gauge.html">계기판</a> · <a href="/guides/index.html">생활 가이드</a></p></div>'))
 
     base = CFG.get("site_url", "").rstrip("/")
     if base:
