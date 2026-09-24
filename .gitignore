@@ -1,0 +1,6 @@
+public/
+__pycache__/
+*.pyc
+data/*.tmp
+_artifact/
+cache/

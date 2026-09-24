@@ -1,0 +1,20 @@
+{
+ "_읽어보세요": [
+  "사이트 전체에서 딱 한 번만 적는 값들입니다. 여기만 고치고 python3 build.py 를 다시 돌리면 모든 페이지에 반영됩니다.",
+  "비어 있는 값은 페이지에 노란 [입력 필요] 표시로 나타나고, build.py 가 마지막에 경고를 출력합니다.",
+  "site_url 예: https://example.kr  (끝에 / 없이)",
+  "adsense_client 예: ca-pub-1234567890123456  (승인 전에는 비워 두세요. 비어 있으면 광고 자리는 점선 틀로만 보입니다)",
+  "operator_bio: 소개 페이지에 들어갈 운영자 한두 문장. 구글은 금융 분야에서 '누가 쓰는지'를 봅니다. 사실만 적으세요.",
+  "indexnow_key: 네이버·Bing 등에 바뀐 페이지를 바로 알리는 IndexNow 키. 공개돼도 되는 값이라 그대로 두면 됩니다. site_url 이 있어야 동작합니다.",
+  "필명(pen_name)이나 문의 이메일(contact_email)이 비어 있으면 모든 페이지에 검색엔진 '색인 금지(noindex)' 표시가 붙고 IndexNow 알림도 보내지 않습니다. 둘 다 채우면 자동으로 풀립니다."
+ ],
+ "site_name": "부동산 시장 온도계",
+ "tagline": "공개 통계로 읽는 주택시장",
+ "site_url": "https://kim-githun.github.io",
+ "pen_name": "",
+ "contact_email": "",
+ "operator_bio": "",
+ "adsense_client": "",
+ "launched": "2026-09-23",
+ "indexnow_key": "66bba7d2873dc4b5007fc691848da913"
+}
