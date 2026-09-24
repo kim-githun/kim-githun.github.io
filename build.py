@@ -33,6 +33,10 @@ from content import pages as PAGES             # noqa: E402
 from content.guidebook import GUIDEBOOK        # noqa: E402
 from content.changelog import CHANGES          # noqa: E402
 from content.keywords import KEYWORDS          # noqa: E402
+import glob as _glob                            # noqa: E402
+POLICIES = sorted((json.load(io.open(f, encoding="utf-8")) for f in _glob.glob(os.path.join(HERE, "content", "policy", "*.json"))),
+                  key=lambda p: (p["checked"], p["slug"]), reverse=True)
+GBY = {g["slug"]: g for g in GUIDEBOOK}
 
 PUB = os.path.join(HERE, "public")
 CFG = json.load(io.open(os.path.join(HERE, "config.json"), encoding="utf-8"))
@@ -419,7 +423,7 @@ def place_ads(body_html, name="본문"):
 # ─────────────────────────────────────────────────────────────
 # 공통 틀
 # ─────────────────────────────────────────────────────────────
-NAV = [("gauge.html", "계기판"), ("guides/index.html", "가이드"), ("articles/index.html", "통계 해설"),
+NAV = [("gauge.html", "계기판"), ("policy/index.html", "정책 해설"), ("guides/index.html", "가이드"), ("articles/index.html", "통계 해설"),
        ("changelog.html", "변경 기록"), ("methodology.html", "산출 방법"), ("about.html", "소개")]
 
 
@@ -1067,6 +1071,112 @@ def changelog_page():
 
 
 # ─────────────────────────────────────────────────────────────
+# 정책 해설 (정책마다 고정 주소 한 페이지. 발표→국회→시행 단계마다 같은 페이지를 고친다)
+# ─────────────────────────────────────────────────────────────
+STAGE = {"announced": ("발표됨", "st-ann"), "legislating": ("국회 심의 중", "st-leg"),
+         "passed": ("확정·시행 예정", "st-pass"), "in_force": ("시행 중", "st-live")}
+POLICY_RELATED = {"jongbu-reform": ["guides/jongbu.html"],
+                  "capital-gains-surcharge": ["guides/jongbu.html"],
+                  "loan-rules-2026": ["guides/first-home.html", "guides/jeonse-tenant.html"]}
+
+
+def stage_badge(p):
+    lbl, cls = STAGE.get(p["stage"], (p["stage"], "st-ann"))
+    return '<span class="stage %s">%s</span>' % (cls, esc(lbl))
+
+
+def policy_card(p, pre=""):
+    return ('<a class="blueprint acard pcard" href="%s%s.html">%s%s<span class="t">%s</span>'
+            '<span class="d">%s</span><span class="eff">%s</span><span class="rv mono">확인 %s</span></a>'
+            % (pre, p["slug"], corners(), stage_badge(p), esc(p["title"]), esc(p["status"]),
+               esc(p["effective"]), esc(p["checked"])))
+
+
+def policy_timeline(p):
+    rows = []
+    for t in p.get("timeline", []):
+        rows.append('<li class="%s"><span class="d mono">%s</span><span class="x">%s</span></li>'
+                    % ("done" if t.get("done") else "todo", esc(t["date"]), esc(t["label"])))
+    return '<ol class="ptl">%s</ol>' % "".join(rows)
+
+
+def policy_page(p):
+    body_html = md(p["body"])
+    hs = re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', body_html)
+    body_html, p["_ads"], p["_chars"] = place_ads(body_html)
+    toc = ('<nav class="blueprint toc" aria-label="목차">%s<b>목차</b><ol>%s</ol></nav>'
+           % (corners(), "".join('<li><a href="#%s">%s</a></li>' % (i, t) for i, t in hs))) if len(hs) >= 4 else ""
+    official = "".join('<li><a href="%s" rel="noopener">%s</a></li>' % (esc(u), esc(lbl)) for lbl, u in p["official"])
+    mine = [c for c in CHANGES if c.get("href") == "policy/%s.html" % p["slug"]]
+    rel = "".join(guide_card(GBY[s[len("guides/"):-5]], "../guides/") for s in POLICY_RELATED.get(p["slug"], [])
+                  if s[len("guides/"):-5] in GBY)
+    others = "".join(policy_card(o) for o in POLICIES if o is not p)
+    body = """
+<div class="wrap narrow doc">
+  <article>
+    <div class="kicker">정책 해설</div>
+    <h1>%(title)s</h1>
+    <p class="sub">%(sub)s</p>
+    <div class="meta"><span>글 %(pen)s</span><span>마지막 확인 %(checked)s</span><span>처음 작성 %(date)s</span>
+      <span><a href="index.html">정책 해설 목록</a></span></div>
+    <section class="blueprint pstat">%(c)s
+      <div class="row">%(badge)s<b>%(status)s</b></div>
+      <p class="eff"><span>적용 시점</span> %(eff)s</p>
+      <details open><summary>진행 단계</summary>%(tl)s</details>
+    </section>
+    <p class="notice">%(checked)s 기준으로 확인한 내용이에요. 국회를 통과하기 전의 정부안은 바뀔 수 있어서 <b>확정 아님</b>으로 따로 적었어요.
+      단계가 바뀌면 이 페이지를 고치고 아래 변경 기록에 남겨요. 신고·계약·대출 전에는 <a href="#official">공식 확인처</a>에서 마지막으로 확인하세요.</p>
+    %(toc)s
+    <div class="prose">%(body)s</div>
+    <section class="blueprint official" id="official">%(c)s<b>공식 확인처</b>
+      <ul>%(official)s</ul></section>
+    <div class="blueprint srcbox">%(c)s<b>자료</b><br>%(src)s
+      <div class="disc">정책 내용을 이해하도록 돕는 일반 정보예요. 세무·법률·금융 상담을 대신하지는 못해요.
+        보유 형태, 소득, 지역, 계약 시점에 따라 결과가 달라져요. 틀린 곳을 발견하시면
+        <a href="../about.html#s-문의">알려 주세요</a>. 확인한 뒤 고치고 아래 변경 기록에 적을게요.</div>
+    </div>
+    <section class="more"><h2>이 페이지의 변경 기록</h2>%(changes)s</section>
+    %(rel)s
+    <section class="more"><h2>다른 정책 해설</h2><div class="cards">%(others)s</div></section>
+  </article>
+</div>""" % {"title": esc(p["title"]), "sub": esc(p["sub"]), "pen": pen(), "checked": esc(p["checked"]),
+             "date": esc(p.get("date", p["checked"])), "c": corners(), "badge": stage_badge(p),
+             "status": esc(p["status"]), "eff": esc(p["effective"]), "tl": policy_timeline(p), "toc": toc,
+             "body": body_html, "official": official, "src": inline(p["sources"]),
+             "changes": changes_list(mine, "../"),
+             "rel": ('<section class="more"><h2>함께 보면 좋은 가이드</h2><div class="cards">%s</div></section>' % rel) if rel else "",
+             "others": others}
+    ld = {"@context": "https://schema.org", "@type": "Article", "headline": p["title"], "description": p["desc"],
+          "datePublished": p.get("date", p["checked"]), "dateModified": p["checked"], "inLanguage": "ko-KR",
+          "author": {"@type": "Person", "name": CFG.get("pen_name") or "운영자"},
+          "publisher": {"@type": "Organization", "name": CFG["site_name"]}}
+    if CFG.get("site_url"):
+        ld["mainEntityOfPage"] = url_of("policy/%s.html" % p["slug"])
+    return page("policy/%s.html" % p["slug"], p["title"], p["desc"], body, current="policy/index.html", jsonld=ld)
+
+
+def policy_index():
+    body = """
+<div class="wrap doc">
+  <div class="kicker">정책 해설 / 전 %d편</div>
+  <h1>정책 해설</h1>
+  <p class="sub" style="max-width:66ch">새로 나온 부동산 세금·대출 정책이 나한테 해당되는지, 언제부터인지, 확정됐는지를 정리했어요.
+     정책마다 페이지 하나를 두고, 국회 통과나 시행처럼 단계가 바뀔 때마다 같은 페이지를 고쳐요.</p>
+  <section class="sec"><div class="cards">%s</div></section>
+  <section class="sec"><div class="sec-head"><div><div class="kicker">원칙</div><h2>이렇게 정리해요</h2></div></div>
+    <ul class="plain">
+      <li>정부 발표와 공식 자료를 먼저 보고, 언론 보도는 두 곳 이상 맞춰 본 것만 써요.</li>
+      <li>국회를 통과하기 전의 내용은 <b>정부안(확정 아님)</b>으로 따로 표시해요.</li>
+      <li>페이지마다 마지막 확인 날짜와 진행 단계, 아직 모르는 것을 함께 적어요.</li>
+      <li>정치적 평가는 양쪽 주장을 함께 적고, 좋다 나쁘다를 판단하지 않아요.</li>
+    </ul></section>
+</div>""" % (len(POLICIES), "".join(policy_card(p) for p in POLICIES))
+    return page("policy/index.html", "정책 해설",
+                "종부세 개편안, 다주택자 양도세 중과, 전세대출 규제처럼 새로 바뀌는 부동산 정책이 나한테 해당되는지, 언제부터인지, 확정됐는지 정리했어요.",
+                body, current="policy/index.html")
+
+
+# ─────────────────────────────────────────────────────────────
 # 첫 화면
 # ─────────────────────────────────────────────────────────────
 def home():
@@ -1113,6 +1223,13 @@ def home():
 <div class="wrap">%(ad)s</div>
 
 <section class="wrap sec">
+  <div class="sec-head"><div><div class="kicker">정책 해설 · 마지막 확인 %(pchk)s</div><h2>요즘 바뀌는 부동산 정책</h2></div>
+    <p>새로 나온 세금·대출 정책이 나한테 해당되는지, 언제부터인지, 확정됐는지 정리했어요. 단계가 바뀔 때마다 같은 페이지를 고쳐요.</p></div>
+  <div class="cards">%(pcards)s</div>
+  <a class="go" href="policy/index.html">정책 해설 전체 →</a>
+</section>
+
+<section class="wrap sec">
   <div class="sec-head"><div><div class="kicker">생활 가이드</div><h2>지금 내 상황에서 확인할 것</h2></div>
     <p>세금, 대출, 전세 보증금처럼 때를 놓치면 되돌리기 어려운 일부터 정리했어요. 글마다 확인한 날짜와 변경 기록이 있어요.</p></div>
   <div class="sits">%(cards)s</div>
@@ -1130,7 +1247,9 @@ def home():
   </div>
 </section>
 """ % {"upd": esc(DATA["updated"]), "zc": zc, "zl": zl, "gap": GAP, "duo": duo, "ad": ad("홈 계기판 아래"),
-       "cards": cards, "changes": changes_list(CHANGES[:5]), "na": len(ARTICLES), "ser": ser}
+       "cards": cards, "changes": changes_list(CHANGES[:5]), "na": len(ARTICLES), "ser": ser,
+       "pchk": esc(max(p["checked"] for p in POLICIES)) if POLICIES else "",
+       "pcards": "".join(policy_card(p, "policy/") for p in POLICIES[:3])}
     desc = ("공개 통계로 읽는 집값 지표. 수도권 과열도 %s(%s), 지방 %s(%s). 종부세·첫 집 대출·전세 보증금 생활 가이드와 통계 해설."
             % (fmt(sc), zc, fmt(sl), zl))
     ld = {"@context": "https://schema.org", "@type": "WebSite", "name": CFG["site_name"],
@@ -1245,6 +1364,10 @@ def lastmod_of(path):
     if path.startswith("articles/") and path != "articles/index.html":
         a = ABY[path[len("articles/"):-5]]
         return a.get("updated", a.get("date"))
+    if path.startswith("policy/") and path != "policy/index.html":
+        return [p for p in POLICIES if "policy/%s.html" % p["slug"] == path][0]["checked"]
+    if path == "policy/index.html":
+        return max(p["checked"] for p in POLICIES)
     if path.startswith("guides/") and path != "guides/index.html":
         g = [x for x in GUIDEBOOK if "guides/%s.html" % x["slug"] == path][0]
         return g["reviewed"]
@@ -1284,6 +1407,11 @@ def main():
         write("guides/%s.html" % g["slug"], guide_page(g))
         pages.append("guides/%s.html" % g["slug"])
     write("changelog.html", changelog_page())
+    write("policy/index.html", policy_index())
+    pages.append("policy/index.html")
+    for p in POLICIES:
+        write("policy/%s.html" % p["slug"], policy_page(p))
+        pages.append("policy/%s.html" % p["slug"])
     write("articles/index.html", articles_index())
     pages.append("articles/index.html")
     for i, a in enumerate(ARTICLES):
@@ -1331,7 +1459,7 @@ def main():
     stale = [d["name"] + "(" + REGION[d["region"]] + ")" for d in IND if d["fresh"]["stale"]]
     if stale:
         print("갱신 지연으로 점수 제외: " + ", ".join(stale))
-    print("본문 광고 자리: " + ", ".join("%s %d자→%d개" % (x["slug"], x["_chars"], x["_ads"]) for x in GUIDEBOOK + ARTICLES))
+    print("본문 광고 자리: " + ", ".join("%s %d자→%d개" % (x["slug"], x["_chars"], x["_ads"]) for x in POLICIES + GUIDEBOOK + ARTICLES))
     short = [(a["slug"], plain_len(a["body"])) for a in ARTICLES if plain_len(a["body"]) < 1200]  # 공식 기준은 없음. 지나치게 짧은 글만 경고
     if short:
         print("본문 1,200자 미만 해설: %s" % short)
