@@ -270,3 +270,24 @@ ul.plain{margin:0;padding-left:20px;font-size:14.5px;line-height:1.8;max-width:7
   .changes .d{grid-column:1 / -1}
 }
 .nw{white-space:nowrap}
+
+/* ── 정책 해설 ─────────────────────────── */
+.stage{align-self:flex-start;display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;white-space:nowrap}
+.st-ann{background:var(--color-neutral-200);color:var(--color-neutral-800)}
+.st-leg{background:var(--color-accent-100);color:var(--color-accent-800);border:1px solid var(--color-accent-700)}
+.st-pass{background:var(--color-accent-700);color:var(--color-bg)}
+.st-live{background:var(--color-accent-900);color:var(--color-bg)}
+.pcard .eff{font-size:12px;color:var(--color-neutral-700);line-height:1.5}
+.pcard .rv{font-size:11px;color:var(--color-neutral-600);margin-top:auto}
+.pstat{margin:22px 0 0;padding:16px 18px}
+.pstat .row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:15px}
+.pstat .eff{margin:10px 0 0;font-size:14px;line-height:1.6}
+.pstat .eff span{font-size:12px;color:var(--color-accent-700);font-weight:600;margin-right:6px}
+.pstat summary{cursor:pointer;font-size:13px;font-weight:600;margin-top:12px;color:var(--color-accent-800)}
+.ptl{list-style:none;margin:10px 0 0;padding:0;border-left:2px solid var(--color-divider)}
+.ptl li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:6px 0 6px 14px;position:relative;font-size:13px;line-height:1.55}
+.ptl li::before{content:"";position:absolute;left:-6px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--color-bg);border:2px solid var(--color-neutral-400)}
+.ptl li.done::before{background:var(--color-accent-700);border-color:var(--color-accent-700)}
+.ptl li.todo{color:var(--color-neutral-700)}
+.ptl .d{font-size:12px;color:var(--color-neutral-600)}
+@media (max-width:640px){ .ptl li{grid-template-columns:minmax(0,1fr);gap:0} }
