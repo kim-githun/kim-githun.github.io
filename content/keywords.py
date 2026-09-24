@@ -72,6 +72,21 @@ KEYWORDS = {
     "articles/sentiment-index.html": {
         "primary": "매수우위지수", "also": ["매매수급지수", "매수심리"],
         "title": "매수우위지수·매매수급지수 뜻 — 둘 다 중개사 설문이에요", "batch": 2},
+
+    # ── 정책 해설 (단계가 바뀌면 title 도 함께 고친다) ─────
+    "policy/index.html": {
+        "primary": "부동산 정책 정리", "also": ["부동산 대책 정리", "2026 부동산 정책"],
+        "title": "부동산 정책 정리 — 종부세·양도세·대출 규제, 나한테 해당될까", "batch": 9},
+    "policy/jongbu-reform.html": {
+        "primary": "종부세 개편안", "also": ["2027 종부세", "종부세 공동명의 개편", "종부세 거주 공제"],
+        "title": "종부세 개편안 정리 — 누가 더 내고 언제부터 (정부안, 국회 심의 중)", "batch": 9},
+    "policy/capital-gains-surcharge.html": {
+        "primary": "다주택자 양도세 중과", "also": ["양도세 중과 유예", "양도세 중과 지역", "조정대상지역"],
+        "title": "다주택자 양도세 중과 — 중과 지역·기준과 한시 완화 정부안 정리", "batch": 9},
+    "policy/loan-rules-2026.html": {
+        "primary": "전세대출 규제", "also": ["8.13 대책", "전세대출 DSR", "비거주 1주택자 전세대출"],
+        "title": "전세대출 규제와 DSR 정리 — 8·13 대책 이후 시행일과 대상",
+        "batch": 9},
 }
 
 # 사이트에 아직 페이지가 없지만 함께 조회해 수요를 볼 검색어 (새 글 후보 판정용)
