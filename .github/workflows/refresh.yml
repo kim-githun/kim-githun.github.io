@@ -1,0 +1,105 @@
+name: 지표 갱신과 배포
+
+# 매주 금요일 09:00 KST 에 공개 API 로 지표를 갱신하고, 검사를 통과한 값만 반영해 사이트를 다시 배포합니다.
+# 부동산원 주간 통계는 목요일에 나오므로 금요일 아침이면 반영됩니다. (cron 은 UTC 기준)
+on:
+  schedule:
+    - cron: "0 0 * * 5"
+  push:
+    branches: [main]          # config.json·글을 고치고 올리면 갱신 없이 다시 배포만 합니다
+  workflow_dispatch:
+    inputs:
+      accept:
+        description: "급변 검사로 보류된 지표를 원자료 확인 후 통과시킬 때 (예: base,mort). 평소에는 비워 두세요."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 안전장치 테스트
+        run: python3 test_refresh.py
+
+      - name: 지표 갱신 (검사를 통과한 값만 반영)
+        id: refresh
+        if: github.event_name != 'push'
+        env:
+          ECOS_KEY: ${{ secrets.ECOS_KEY }}
+          KOSIS_KEY: ${{ secrets.KOSIS_KEY }}
+          RONE_KEY: ${{ secrets.RONE_KEY }}
+          ACCEPT: ${{ github.event.inputs.accept }}
+        run: |
+          set +e
+          if [ -n "$ACCEPT" ]; then
+            python3 refresh.py update --accept "$ACCEPT"
+          else
+            python3 refresh.py update
+          fi
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: 데이터·검증 기록 커밋
+        if: github.event_name != 'push'
+        run: |
+          git add data
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "지표 자동 갱신 $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: 사이트 생성
+        run: python3 build.py
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      # 배포가 끝난 뒤, 본문이 실제로 바뀐 페이지만 네이버·IndexNow 참여 검색엔진에 알립니다.
+      # 실패해도 배포에는 영향 없음. 보낸 기록은 data/indexnow.json 에 남겨 다음에 중복 전송하지 않습니다.
+      - name: 검색엔진에 바뀐 페이지 알림 (IndexNow)
+        continue-on-error: true
+        run: |
+          python3 tools/indexnow.py
+          git add data/indexnow.json 2>/dev/null || true
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "IndexNow 전송 기록 $(date -u +%Y-%m-%d)"
+          git pull --rebase
+          git push
+
+      # 갱신이 게시되지 않았으면 작업을 '실패'로 표시해 GitHub 가 알림 메일을 보내게 합니다.
+      # 사이트는 위에서 이미 다시 배포됐고, 오래된 지표는 '갱신 지연'으로 표시됩니다.
+      - name: 게시 보류 알림
+        if: steps.refresh.outputs.rc == '1' || steps.refresh.outputs.rc == '2'
+        run: |
+          echo "::error::이번 갱신은 게시되지 않았습니다. data/log.jsonl 마지막 줄과 사이트 '산출 방법' 페이지의 최근 갱신 기록을 확인하세요."
+          exit 1
