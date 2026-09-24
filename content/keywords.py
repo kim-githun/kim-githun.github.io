@@ -39,7 +39,7 @@ KEYWORDS = {
         "title": "수도권·지방 집값 차이 — 전국 평균이 감추는 것", "batch": 1},
     "articles/jeonse-ratio.html": {
         "primary": "전세가율", "also": ["전세가율 뜻", "아파트 전세가율"],
-        "title": "전세가율 뜻과 읽는 법 — 아파트인지 주택종합인지부터", "batch": 2},
+        "title": "전세가율 뜻과 읽는 법 — 아파트인지 오피스텔인지부터", "batch": 2},
     "articles/unsold-housing.html": {
         "primary": "준공후 미분양", "also": ["미분양 현황", "악성 미분양"],
         "title": "준공후 미분양과 미분양 현황 읽는 법 — 전국 합계의 함정", "batch": 2},
